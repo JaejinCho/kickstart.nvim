@@ -8,6 +8,11 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
 end
 
 require('packer').startup(function(use)
+  -- JJ added - start
+  -- To install a package e.g., use '[github repo name]'
+  -- use 'python-lsp/python-lsp-server' -- This can be done in "local servers" below. Also, I use pyright LSP instead of this LSP
+  -- JJ added - end
+
   -- Package manager
   use 'wbthomason/packer.nvim'
 
@@ -96,7 +101,7 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 -- See `:help vim.o`
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 
 -- Make line numbers default
 vim.wo.number = true
@@ -108,7 +113,7 @@ vim.o.mouse = 'a'
 vim.o.breakindent = true
 
 -- Save undo history
-vim.o.undofile = true
+vim.o.undofile = false
 
 -- Case insensitive searching UNLESS /C or capital in search
 vim.o.ignorecase = true
@@ -151,6 +156,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- This (I think require([plugin name]).setup) configures plugins
 -- Set lualine as statusline
 -- See `:help lualine.txt`
 require('lualine').setup {
@@ -216,6 +222,9 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+
+vim.keymap.set('n', ',n', '<esc>:tabprevious<CR>', { desc = 'move to the previous tab'})
+vim.keymap.set('n', ',m', '<esc>:tabnext<CR>', { desc = 'move to the next tab'})
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -339,7 +348,7 @@ end
 local servers = {
   -- clangd = {},
   -- gopls = {},
-  -- pyright = {},
+  pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
 
