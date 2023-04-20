@@ -1,4 +1,4 @@
--- Install packer
+-- Install packer (plug-in manager)
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 local is_bootstrap = false
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
@@ -10,7 +10,7 @@ end
 require('packer').startup(function(use)
   -- JJ added - start
   -- To install a package e.g., use '[github repo name]'
-  -- use 'python-lsp/python-lsp-server' -- This can be done in "local servers" below. Also, I use pyright LSP instead of this LSP
+  -- use 'python-lsp/python-lsp-server' -- This can be done in "local servers" below. Also, I tried to use pyright but it did NOT connect well (hard to debug)
   -- JJ added - end
 
   -- Package manager
@@ -55,7 +55,6 @@ require('packer').startup(function(use)
 
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
-  use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
   use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
 
@@ -171,13 +170,6 @@ require('lualine').setup {
 -- Enable Comment.nvim
 require('Comment').setup()
 
--- Enable `lukas-reineke/indent-blankline.nvim`
--- See `:help indent_blankline.txt`
-require('indent_blankline').setup {
-  char = '┊',
-  show_trailing_blankline_indent = false,
-}
-
 -- Gitsigns
 -- See `:help gitsigns.txt`
 require('gitsigns').setup {
@@ -225,6 +217,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 
 vim.keymap.set('n', ',n', '<esc>:tabprevious<CR>', { desc = 'move to the previous tab'})
 vim.keymap.set('n', ',m', '<esc>:tabnext<CR>', { desc = 'move to the next tab'})
+vim.keymap.set('n', ',b', 'Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>', { desc = 'set pdb breakpoint'})
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -348,11 +341,17 @@ end
 local servers = {
   -- clangd = {},
   -- gopls = {},
-  pyright = {},
+  -- pyright = {},
+  pylsp = { 
+    plugins = {
+      pylint = { enabled = true },
+      pyflakes = { enabled = true },
+    }
+  },
   -- rust_analyzer = {},
   -- tsserver = {},
 
-  sumneko_lua = {
+  lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
@@ -435,3 +434,6 @@ cmp.setup {
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+--
+-- Custumized search function for any literal, e.g., :SS [any search string]
+vim.api.nvim_command("command! -nargs=1 SS let @/ = '\\V'.escape(<q-args>, '/\\') | normal! /<C-R>/<CR>")
